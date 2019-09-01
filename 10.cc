@@ -1,24 +1,50 @@
 class Solution {
 public:
-    void nextPermutation(vector<int>& nums) {
-        // Handle small size arrays.
-        if (nums.size() <= 1) return;
-        
-        int i = nums.size() - 2;
-        for (; i >= 0; --i) {
-            if (nums[i] < nums[i + 1]) break;
-        }
-        int larger = INT_MAX;
-        int larger_index = 0;
-        for (int j = i + 1; j < nums.size(); ++j) {
-            if (nums[j] > nums[i] && nums[j] < larger) {
-                larger = nums[j];
-                larger_index = j;
+    string s, p;
+    bool isMatch(string s, string p) {
+        /* if (s.size() == 0) {
+            if (p.size() % 2 != 0) return false;
+            for (int i = 0; i < p.size(); i += 2) {
+                if (p[i] != '.' || p[i + 1] != '*')
+                    return false;
             }
+            return true;
         }
-        int temp = nums[i];
-        nums[i] = nums[larger_index];
-        nums[larger_index] = temp;
-        reverse(nums.begin() + i + 1, nums.end());
+        if (p.size() == 0) return false;*/
+        this->s = s;
+        this->p = p;
+        return f(0, 0);
+    }
+    
+    bool f(int i, int j) {
+        if (i == s.size()) {
+            if ((j - p.size()) % 2 != 0) return false;
+            for (int z = j; z < p.size(); z += 2) {
+                if (p[z + 1] != '*')
+                return false;
+            }
+            return true;
+        }
+        if (j == p.size()) return false;
+        if (s[i] == p[j]) {
+            if (j + 1 < p.size() && p[j + 1] == '*')
+                return f(i + 1, j + 1) || f(i, j + 2) || f(i + 1, j + 2);
+            else return f(i + 1, j + 1);
+        }
+        else {
+            if (p[j] == '*') {
+                if (p[j - 1] == s[i] || p[j - 1] == '.') {
+                    return f(i + 1, j) || f(i + 1, j + 1);
+                } else return false;
+            } else if (p[j] == '.') {
+                if (j < p.size() - 1 && p[j + 1] == '*')
+                    return f(i + 1, j + 1) || f(i, j + 2) || f(i + 1, j + 2);
+                else return f(i + 1, j + 1);
+                return f(i + 1, j + 1);
+            } else if (j < p.size() - 1 && p[j + 1] == '*') {
+                return f(i, j + 2);
+            } else return false;
+        }
+        return false;
     }
 };
